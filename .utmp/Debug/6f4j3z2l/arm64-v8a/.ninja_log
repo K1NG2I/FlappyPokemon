@@ -1,0 +1,12 @@
+# ninja log v5
+113	1587	7620471963877162	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	55acb80c52baa508
+1591	2129	7620471969675256	D:/Yash/Flappy Pokemon/Flappy Pokemon/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/6f4j3z2l/obj/arm64-v8a/libswappywrapper.so	7a24c8254cf7570a
+84	4184	7620471990322596	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	1e37debf30bfca4
+65	4216	7620471990458660	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	bb6a12de7b3a4613
+35	4219	7620471990489027	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	67f13554800cd3e7
+12	4224	7620471990557078	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	36f231a035ea8740
+99	4251	7620471991075891	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	4af75ed447c91533
+1	4256	7620471991111081	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	940d7c63819ce53
+48	4497	7620471993562165	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	ed8c941d41e0f9b0
+23	4631	7620471994805437	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	3c8f2518b39cbed5
+4631	4814	7620471996753043	D:/Yash/Flappy Pokemon/Flappy Pokemon/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/6f4j3z2l/obj/arm64-v8a/libgame.so	d52f598e3003e518
