@@ -335,7 +335,15 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      GameUI-New 1_0: -7176644752856170090
+      GameUI-New 1_1: 8975448267776837792
+      GameUI-New 1_2: -1041190456012340704
+      GameUI-New 1_3: -4757176862045520840
+      GameUI-New 1_4: -7474469913202808333
+      GameUI-New 1_5: 2813613800265815855
+      GameUI-New 1_6: 4871271851410047101
+      GameUI-New 1_7: -3163663744038126494
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

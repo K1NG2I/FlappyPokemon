@@ -1,71 +1,62 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameScript : MonoBehaviour
 {
-    public GameObject LevelSelect;
-    public GameObject SoundSetting;
     public GameObject GameOverScreen;
-    public GameObject SelectSkin;
     public GameObject NewScore;
-    public GameObject DragonBlue, DragonYellow;
-    public static bool canPressButton = true;
     public Button RestartButton;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    private void Start()
     {
         RestartButton.interactable = false;
-        LevelSelect.SetActive(false);
-        SoundSetting.SetActive(false);
-        SelectSkin.SetActive(false);
         GameOverScreen.SetActive(false);
         NewScore.SetActive(false);
-        DragonBlue.SetActive(false);
-        DragonYellow.SetActive(false);
     }
 
-    public void ChecHighScore()
+    private void Update()
     {
-        if (FlyScript.sethighscore == true)
+        CheckHighScore();
+        CheckIfGameStopped();
+
+        // Hide new score pop-up when clicking anywhere
+        if (Input.GetMouseButtonDown(0))
+        {
+            NewScore.SetActive(false);
+        }
+    }
+
+    private void CheckHighScore()
+    {
+        if (GameManager.Instance.Score > PlayerPrefs.GetInt("HighScore"))
         {
             GameOverScreen.SetActive(true);
             StartCoroutine(PreventSkip(2));
-            FlyScript.sethighscore = false; 
+            PlayerPrefs.SetInt("HighScore", GameManager.Instance.Score);
+            PlayerPrefs.Save();
         }
     }
-    public void CheckIsGameStopped()
+
+    private void CheckIfGameStopped()
     {
-        if (FlyScript.IsGameStopped == true)
+        if (!GameManager.Instance.IsGameRunning)
         {
             GameOverScreen.SetActive(true);
             StartCoroutine(EnableRestartButtonAfterDelay(1));
-            FlyScript.IsGameStopped = false;
         }
     }
-    IEnumerator PreventSkip(int time)
+
+    private IEnumerator PreventSkip(int time)
     {
-        canPressButton = false;
         yield return new WaitForSeconds(time);
         StartCoroutine(EnableRestartButtonAfterDelay(1));
-        canPressButton = true;
     }
-    IEnumerator EnableRestartButtonAfterDelay(int delay)
+
+    private IEnumerator EnableRestartButtonAfterDelay(int delay)
     {
         RestartButton.interactable = false;
         yield return new WaitForSeconds(delay);
         RestartButton.interactable = true;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
-        ChecHighScore();
-        CheckIsGameStopped();
-        if (Input.GetMouseButtonDown(0) && canPressButton)
-        {
-            NewScore.SetActive(false);
-            
-        }
     }
 }

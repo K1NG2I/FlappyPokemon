@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      pngkey.com-tree-texture-png-1244594_0: 2517825349936271643
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

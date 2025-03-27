@@ -285,7 +285,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      SkinsUI_0: 3219730542758678206
+      SkinsUI_1: -4752624903226872192
+      SkinsUI_2: 5355113641097157450
+      SkinsUI_3: 3333361231989318341
+      SkinsUI_4: 981974528408395409
+      SkinsUI_5: 4141428082521996779
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
