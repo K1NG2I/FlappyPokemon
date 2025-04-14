@@ -1,0 +1,211 @@
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+using System.Diagnostics;
+
+public class GameManager : MonoBehaviour
+{
+    // Singleton Pattern (Encapsulation + Static)
+    public static GameManager Instance { get; private set; }
+
+    // Dta Encapsulation
+    private ScoreManager _scoreManager;
+    private PlayerManager _playerManager;
+    private HurdleManager _hurdleManager;
+    private StartGame _startGame;
+    private DragonManager _dragonManager;
+
+    private bool _isGameRunning;
+    private bool _isGameStarted;
+
+    // Data Abstraction
+    public GameObject NewScore;
+    public GameObject Player;
+    private Rigidbody2D _rb;
+    public UIController UIController;
+    public Text ScoreText, HighScoreText, YourScore, BestScore;
+    public GameObject GameOverScreen, ScoreBoard, MainScore;
+    public Button RestartButton;
+
+    public GameObject HurdleUp, HurdleDown, Base;
+
+    public GameObject Dragon_Normal, Dragon_Blue, Dragon_Yellow;
+
+    public GameObject Lock1, Lock2; 
+
+    public bool IsGameRunning => _isGameRunning;
+    public bool IsGameStarted => _isGameStarted;
+    public int Score => _scoreManager.Score;
+
+    private void Awake()
+    {
+        // Singleton Pattern
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        // Creating Instances
+        _scoreManager = new ScoreManager();
+        _playerManager = new PlayerManager(Player);
+        _hurdleManager = new HurdleManager(HurdleUp, HurdleDown);
+        _dragonManager = new DragonManager(Dragon_Normal, Dragon_Blue, Dragon_Yellow);
+        _startGame = new StartGame(_dragonManager);
+    }
+
+    private void Start()
+    {
+        _scoreManager.LoadHighScore();
+
+        if (_scoreManager.HighScore >= 10)
+        {
+            PlayerPrefs.SetInt("BlueUnlocked", 1);
+            Lock1.SetActive(false);
+        }
+
+        string savedDragon = PlayerPrefs.GetString("SelectedDragon", "Dragon_Starter");
+        
+        ChooseDragon(savedDragon);
+
+        ResetGame();
+    }
+
+    private void Update()
+    {
+        // Delegation
+        if (Input.GetMouseButtonDown(0) && _isGameStarted == true)
+        {
+            _playerManager.Jump();
+        }
+
+        if (_isGameStarted)
+        {
+            if (IsColliding(Player, Base))
+            {
+                StopGame();
+            }
+
+            if (IsColliding(Player, HurdleUp) || IsColliding(Player, HurdleDown))
+            {
+                StopGame();
+            }
+
+            if (Player.transform.position.x > HurdleUp.transform.position.x && !HurdleUp.GetComponent<HurdleController>().isPassed)
+            {
+                HurdleUp.GetComponent<HurdleController>().isPassed = true;
+                IncrementScore();
+            }
+        }
+    }
+
+    private bool IsColliding(GameObject obj1, GameObject obj2)
+    {
+        Vector2 pos1 = obj1.transform.position;
+        Vector2 pos2 = obj2.transform.position;
+        Vector2 size1 = obj1.GetComponent<SpriteRenderer>().bounds.size;
+        Vector2 size2 = obj2.GetComponent<SpriteRenderer>().bounds.size;
+
+        bool isOverlappingX = Mathf.Abs(pos1.x - pos2.x) < (size1.x / 2 + size2.x / 2);
+        bool isOverlappingY = Mathf.Abs(pos1.y - pos2.y) < (size1.y / 2 + size2.y / 2);
+
+        return isOverlappingX && isOverlappingY;
+    }
+
+    private void IncrementScore()
+    {
+        _scoreManager.IncrementScore();
+        ScoreText.text = "Score " + _scoreManager.Score;
+
+        
+        if (_scoreManager.Score >= 10 && PlayerPrefs.GetInt("BlueUnlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt("BlueUnlocked", 1);
+            Lock1.SetActive(false);
+        }
+        if (_scoreManager.Score >= 25 && PlayerPrefs.GetInt("YellowUnlocked", 0) == 0)
+        {
+            PlayerPrefs.SetInt("YellowUnlocked", 1);
+            Lock2.SetActive(false);
+      
+        }
+    }
+
+    public void StartGame()
+    {
+        _isGameStarted = true;
+        _isGameRunning = true;
+        _rb.gravityScale = 1;
+        ScoreBoard.SetActive(true);
+        MainScore.SetActive(false);
+        UIController.ToggleUIOff("LandingPage");
+        UIController.ToggleUIOn("MainFrame");
+        _hurdleManager.ActivateHurdles();
+    }
+
+    public void StopGame()
+    {
+        _isGameRunning = false;
+        _isGameStarted = false;
+        _rb.gravityScale = 0;
+        Player.transform.position = new Vector2(Player.transform.position.x, -13f);
+        UIController.HideAllUI("GameOver");
+        StartCoroutine(EnableRestartButtonAfterDelay(1));
+        BestScore.text = "Best Score: " + _scoreManager.HighScore;
+        YourScore.text = "Your Score: " + _scoreManager.Score;
+        HighScoreText.text = "High Score" + _scoreManager.HighScore;
+        MainScore.SetActive(true);
+        if (_scoreManager.isHighScore == true)
+        {
+            StartCoroutine(NewHighScore(5f));
+        }
+    }
+
+    public void RestartGame()
+    {
+        ResetGame();
+        StartGame();
+    }
+
+    public void ResetGame()
+    {
+        UIController.HideAllUI("LandingPage");
+        _scoreManager.ResetScore();
+        _rb.gravityScale = 0;
+        ScoreBoard.SetActive(false);
+        MainScore.SetActive(true);
+        _hurdleManager.DeactivateHurdles();
+        if (NewScore != null)
+        {
+            NewScore.SetActive(false);
+        }
+    }
+
+    private IEnumerator EnableRestartButtonAfterDelay(int delay)
+    {
+        RestartButton.interactable = false;
+        yield return new WaitForSeconds(delay);
+        RestartButton.interactable = true;
+    }
+
+    private IEnumerator NewHighScore(float seconds)
+    {
+        UnityEngine.Debug.Log("New High Score!");
+        NewScore.SetActive(true);
+        yield return new WaitForSeconds(seconds);
+        NewScore.SetActive(false);
+    }
+
+    public void ChooseDragon(string dragonType)
+    {
+        // Polymorphism
+        PlayerPrefs.SetString("SelectedDragon", dragonType); 
+        _startGame.SelectDragon(dragonType);
+        Player = _dragonManager.ActiveDragon;
+        _rb = Player.GetComponent<Rigidbody2D>();
+        _playerManager = new PlayerManager(Player);
+    }
+}
